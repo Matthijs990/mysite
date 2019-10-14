@@ -13,11 +13,19 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.http import HttpResponse as r
 from django.contrib import admin
 from django.urls import include, path
-
+def go(request):
+    return r("""<html>
+    <script>
+    var win = window.open('polls/', '_self');
+    win.focus();
+    </script>
+    </html>""")
 urlpatterns = [
     path('polls/', include('polls.urls')),
     path('admin/', admin.site.urls),
+    path('', go),
 ]
 

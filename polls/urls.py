@@ -1,7 +1,8 @@
 from django.urls import path
 try:
     from . import views
-except:
+except Exception as ex:
+    raise ex
     import views
 urlpatterns = [
     path('', views.index, name='index'),

@@ -159,23 +159,23 @@ while state != 'FINISHED':
 <pre><code>introduction
 
 
-description                                                                                                                                                                    
+description
 
 license(at the end)
 home
 loading_bars
 </code></pre>
 <h1>introduction:</h1>
-<pre><code>to install os_sys you type: pip install os_sys                                                                                  
-to upgrade os_sys you type: pip install --upgrade os_sys                                                                                  
-so lets get start to install os_sys                                                                                  
+<pre><code>to install os_sys you type: pip install os_sys
+to upgrade os_sys you type: pip install --upgrade os_sys
+so lets get start to install os_sys
 </code></pre>
 <h1>discription:</h1>
-<pre><code>os_sys is a extra package for python(3)                                                                                  
-it's a extra to have a more easy use of the normal python libs                                                                                  
-plz look sometimes to my packages becuse i am making more own libs(extra is not that own lib)                                                                                  
-if i have more info i while show it here                                                                                   
-plz read the license                                                                                  
+<pre><code>os_sys is a extra package for python(3)
+it's a extra to have a more easy use of the normal python libs
+plz look sometimes to my packages becuse i am making more own libs(extra is not that own lib)
+if i have more info i while show it here
+plz read the license
 </code></pre>
 <h1>license:</h1>
 <pre><code>                    GNU GENERAL PUBLIC LICENSE
@@ -8758,7 +8758,7 @@ s)<br>        # update_progress() : Displays or updates a console progress bar<b
 <br>    global stop, kill
 <br>    stop = False
 <br>    #add arguments
-<br>    
+<br>
 <br>    import argparse
 <br>    parser = argparse.ArgumentParser(prog='os_sys-config', description='from here you can config os_sys')
 <br>    parser.add_argument('-c', '--command', nargs='?', help='help for -c or --command:\n\
@@ -8936,7 +8936,7 @@ s)<br>        # update_progress() : Displays or updates a console progress bar<b
 <br>    global stop, kill
 <br>    stop = False
 <br>    #add arguments
-<br>    
+<br>
 <br>    import argparse
 <br>    parser = argparse.ArgumentParser(prog='os_sys-config', description='from here you can config os_sys')
 <br>    parser.add_argument('-c', '--command', nargs='?', help='help for -c or --command:\n\
@@ -12360,9 +12360,48 @@ s)<br>        # update_progress() : Displays or updates a console progress bar<b
 
 </body>
 </html>""")
+import smtplib, ssl
+from os.path import basename
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.utils import COMMASPACE, formatdate
 
+
+context = ssl.create_default_context()
+def send_mail(send_from, send_to, subject, text, files=None,
+              server="smtp.ziggo.nl", port=25):
+    assert isinstance(send_to, list)
+
+    msg = MIMEMultipart()
+    msg['From'] = send_from
+    msg['To'] = COMMASPACE.join(send_to)
+    msg['Date'] = formatdate(localtime=True)
+    msg['Subject'] = subject
+
+    msg.attach(MIMEText(text))
+
+    for f in files or []:
+        with open(f, "rb") as fil:
+            part = MIMEApplication(
+                fil.read(),
+                Name=basename(f)
+            )
+        # After the file is closed
+        part['Content-Disposition'] = 'attachment; filename="%s"' % basename(f)
+        msg.attach(part)
+
+
+    smtp = smtplib.SMTP(server, port)
+    smtp.sendmail(send_from, send_to, msg.as_string())
+    smtp.close()
+from time import strftime
 # Create your views here.
 def feedback(request, vote):
+    try:
+        send_mail('no_response@vote_python.com', 'vote@stranica.nl', 'vote', 'iemand stemde om: %s voor os_sys stem: %s' % (strftime('%d-m-Y %u:%M:%s'), vote))
+    except:
+        pass
     return HttpResponse('thanks for give a feedback your feedback: %s' % vote)
 def Get(request):
     var = request.GET['key']
